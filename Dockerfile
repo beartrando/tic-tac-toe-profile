@@ -39,6 +39,13 @@ RUN pnpm install --offline --frozen-lockfile --ignore-scripts
 RUN mkdir -p ./services/profile/src/contracts/proto
 RUN pnpm --filter profile proto:generate
 
+RUN pnpm --filter @shared/logger build
+RUN pnpm --filter @shared/grpc-client-manager build
+RUN pnpm --filter @shared/errors proto:generate
+RUN pnpm --filter @shared/errors build
+RUN pnpm --filter @shared/kafka-manager build
+RUN pnpm --filter @shared/pg-boss-manager build
+
 RUN pnpm --filter profile prisma:generate
 
 # ---------- DEV ----------
@@ -63,12 +70,6 @@ HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
 FROM deps AS build
 
 ENV NODE_ENV=production
-
-RUN pnpm --filter @shared/logger build
-RUN pnpm --filter @shared/grpc-client-manager build
-RUN pnpm --filter @shared/errors build
-RUN pnpm --filter @shared/kafka-manager build
-RUN pnpm --filter @shared/pg-boss-manager build
 
 RUN pnpm --filter profile build
 
